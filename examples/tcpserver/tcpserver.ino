@@ -36,7 +36,6 @@ void setup() {
     while(true);
   } 
   
-  pinMode(3, INPUT);
   // use last time's configs to connect if possible
   WiFi.begin();
   
@@ -52,10 +51,6 @@ void setup() {
     WiFi.begin(ssid, pass);
     */
     
-    // hang until smart config
-    if (digitalRead(3) == HIGH){
-      status = WiFi.beginSmartConfig();
-    }
   } 
   
   server.begin();

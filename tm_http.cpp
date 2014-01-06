@@ -137,17 +137,17 @@ int tm_http_parse_headers (int ulSocket, void (*on_header_key)(char *, int), voi
 
 void on_http_header_key (char *buf, int len)
 {
-  TM_DEBUG("HEADER matched %s\n", buf);
+  TM_DEBUG("HEADER matched %s\n\r", buf);
 }
 
 void on_http_header_value (char *buf, int len)
 {
-  TM_DEBUG("VALUE matched %s\n", buf);
+  TM_DEBUG("VALUE matched %s\n\r", buf);
 }
 
 void on_http_body (int status, int len)
 {
-  TM_DEBUG("BODY %d length %d\n", status, len);
+  TM_DEBUG("BODY %d length %d\n\r", status, len);
 }
 
 

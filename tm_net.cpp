@@ -150,11 +150,11 @@ void tm_net_initialize (void)
   SpiInit();
   delayMicroseconds(100);
 
-  TM_DEBUG("Calling wlan_init\n");
+  TM_DEBUG("Calling wlan_init\n\r");
   wlan_init(CC3000_UsynchCallback, NULL, NULL, NULL, ReadWlanInterruptPin, 
     WlanInterruptEnable, WlanInterruptDisable, WriteWlanPin);
 
-  TM_DEBUG("Calling wlan_start...\n");
+  TM_DEBUG("Calling wlan_start...\n\r");
   wlan_start(0);
 
   // tm_net_initialize_dhcp_server();
@@ -162,7 +162,7 @@ void tm_net_initialize (void)
   // delay(2000);
   // wlan_start(0);
   
-  TM_DEBUG("setting event mask\n");
+  TM_DEBUG("setting event mask\n\r");
   wlan_set_event_mask(HCI_EVNT_WLAN_KEEPALIVE|HCI_EVNT_WLAN_UNSOL_INIT|HCI_EVNT_WLAN_ASYNC_PING_REPORT);
 
   // TM_DEBUG("config wlan\n");
@@ -170,9 +170,9 @@ void tm_net_initialize (void)
 
   unsigned char version[2];
   if (!nvmem_read_sp_version(version)) {
-    TM_DEBUG("Firmware version: %d.%d\n", version[0], version[1]);
+    TM_DEBUG("Firmware version: %d.%d\n\r", version[0], version[1]);
   } else {
-    TM_DEBUG("Failed to read version\n");
+    TM_DEBUG("Failed to read version\n\r");
   }
 }
 
@@ -191,9 +191,9 @@ void tm_net_disconnect (void)
 
 int tm_net_connect_wpa2 (const char *ssid, const char *keys)
 {
-  TM_DEBUG("Attempting to connect...\n");
+  TM_DEBUG("Attempting to connect...\n\r");
   int connected = wlan_connect(WLAN_SEC_WPA2, (char *) ssid, strlen(ssid), 0, (unsigned char *) keys, strlen(keys));
-  TM_DEBUG("Connected: %d\n", connected);
+  TM_DEBUG("Connected: %d\n\r", connected);
   return connected;
 }
 
@@ -227,7 +227,7 @@ int tm_net_udp_listen (int ulSocket, int port)
 	// Bind socket
 	int sockStatus;
 	if ( (sockStatus = bind(ulSocket, &localSocketAddr, sizeof(sockaddr)) ) != 0) {
-		TM_DEBUG("Binding UDP socket failed: %d\n", sockStatus);
+		TM_DEBUG("Binding UDP socket failed: %d\n\r", sockStatus);
 	}
   return sockStatus;
 }
@@ -236,9 +236,9 @@ int tm_net_udp_receive (int ulSocket, uint8_t *buf, unsigned long buf_len, socka
 {
 	signed long ret = recvfrom(ulSocket, buf, buf_len, 0, from, from_len);
 	if (ret <= 0) {
-		TM_DEBUG("No data recieved\n");
+		TM_DEBUG("No data recieved\n\r");
 	} else {
-		TM_DEBUG("Recieved %d UDP bytes\n", ret);
+		TM_DEBUG("Recieved %d UDP bytes\n\r", ret);
 	}
   return ret;
 }
@@ -329,17 +329,17 @@ int tm_net_tcp_listen (int ulSocket, int port)
   localSocketAddr.sa_data[5] = 0;
 
   // Bind socket
-  TM_DEBUG("Binding local socket...\n");
+  TM_DEBUG("Binding local socket...\n\r");
   int sockStatus;
   if ((sockStatus = bind(ulSocket, &localSocketAddr, sizeof(sockaddr))) != 0) {
-    TM_DEBUG("binding failed: %d\n", sockStatus);
+    TM_DEBUG("binding failed: %d\n\r", sockStatus);
     return -1;
   }
 
-  TM_DEBUG("Listening on local socket...\n");
+  TM_DEBUG("Listening on local socket...\n\r");
   int listenStatus = listen(ulSocket, 1);
   if (listenStatus != 0) {
-    TM_DEBUG("cannot listen to socket: %d\n", listenStatus);
+    TM_DEBUG("cannot listen to socket: %d\n\r", listenStatus);
     return -1;
   }
 
@@ -379,5 +379,5 @@ void tm_net_tcp_read_debug (int ulSocket)
       TM_DEBUG("%c", buf[i]);
     }
   }
-  TM_DEBUG("\n(Read %d bytes.)\n", tcpc);
+  TM_DEBUG("\n\r(Read %d bytes.)\n\r", tcpc);
 }

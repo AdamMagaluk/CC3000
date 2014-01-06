@@ -36,19 +36,19 @@
 #define eSPI_STATE_READ_EOT               (8)
 
 
-#define CC3000_nIRQ     (2)
+#define CC3000_nIRQ     (3)
 #define HOST_nCS        (10)
-#define HOST_VBAT_SW_EN (9)
-#define LED             (6)
+#define HOST_VBAT_SW_EN (5)
+
 
 #define DISABLE                   (0)
-
 #define ENABLE                    (1)
 
 #define DEBUG_MODE    (1)
 #define NETAPP_IPCONFIG_MAC_OFFSET        (20)
-#define ConnLED (7)
-#define ErrorLED (6)
+#define ConnLED (2)
+#define ErrorLED (4)
+#define LED             (4)
 
 
 unsigned char tSpiReadHeader[] = {READ, 0, 0, 0, 0};
@@ -130,7 +130,7 @@ void csn(int mode)
 //*****************************************************************************
 void SpiCleanGPIOISR(void)
 {
-  TM_DEBUG("SpiCleanGPIOISR\n");
+  TM_DEBUG("SpiCleanGPIOISR\n\r");
 
   //add code
 }
@@ -151,7 +151,7 @@ void SpiCleanGPIOISR(void)
 void
 SpiClose(void)
 {
-  TM_DEBUG("SpiClose\n");
+  TM_DEBUG("SpiClose\n\r");
 
   if (sSpiInformation.pRxPacket)
   {
@@ -171,7 +171,7 @@ void SpiInit(){
   ulSmartConfigFinished=0;
 
   pinMode(CC3000_nIRQ, INPUT);
-  attachInterrupt(0, SPI_IRQ, FALLING); //Attaches Pin 2 to interrupt 1
+  attachInterrupt(1, SPI_IRQ, FALLING); //Attaches Pin 2 to interrupt 1
   
   pinMode(HOST_nCS, OUTPUT);
   pinMode(HOST_VBAT_SW_EN, OUTPUT);
@@ -211,7 +211,7 @@ void SpiInit(){
 //*****************************************************************************
 void SpiOpen(gcSpiHandleRx pfRxHandler)
 {
-  TM_DEBUG("SpiOpen\n");
+  TM_DEBUG("SpiOpen\n\r");
 
   sSpiInformation.ulSpiState = eSPI_STATE_POWERUP;
 
@@ -230,7 +230,7 @@ void SpiOpen(gcSpiHandleRx pfRxHandler)
   tSLInformation.WlanInterruptEnable();
 
 
-  TM_DEBUG("Completed SpiOpen\n");
+  TM_DEBUG("Completed SpiOpen\n\r");
 }
 
 
@@ -254,7 +254,7 @@ long SpiFirstWrite(unsigned char *ucBuf, unsigned short usLength)
   //
   // workaround for first transaction
   //
-  TM_DEBUG("SpiFirstWrite\n");
+  TM_DEBUG("SpiFirstWrite\n\r");
 
   // digitalWrite(HOST_nCS, LOW);
   csn(LOW);
@@ -661,31 +661,31 @@ void print_spi_state(void)
     switch (sSpiInformation.ulSpiState)
     {
       case eSPI_STATE_POWERUP:
-        TM_DEBUG("POWERUP\n");
+        TM_DEBUG("POWERUP\n\r");
         break;
       case eSPI_STATE_INITIALIZED:
-        TM_DEBUG("INITIALIZED\n");
+        TM_DEBUG("INITIALIZED\n\r");
         break;
       case eSPI_STATE_IDLE:
-        TM_DEBUG("IDLE\n");
+        TM_DEBUG("IDLE\n\r");
         break;
       case eSPI_STATE_WRITE_IRQ:
-        TM_DEBUG("WRITE_IRQ\n");
+        TM_DEBUG("WRITE_IRQ\n\r");
         break;
       case eSPI_STATE_WRITE_FIRST_PORTION:
-        TM_DEBUG("WRITE_FIRST_PORTION\n");
+        TM_DEBUG("WRITE_FIRST_PORTION\n\r");
         break;
       case eSPI_STATE_WRITE_EOT:
-        TM_DEBUG("WRITE_EOT\n");
+        TM_DEBUG("WRITE_EOT\n\r");
         break;
       case eSPI_STATE_READ_IRQ:
-        TM_DEBUG("READ_IRQ\n");
+        TM_DEBUG("READ_IRQ\n\r");
         break;
       case eSPI_STATE_READ_FIRST_PORTION:
-        TM_DEBUG("READ_FIRST_PORTION\n");
+        TM_DEBUG("READ_FIRST_PORTION\n\r");
         break;
       case eSPI_STATE_READ_EOT:
-        TM_DEBUG("STATE_READ_EOT\n");
+        TM_DEBUG("STATE_READ_EOT\n\r");
         break;
       default:
         break;
@@ -730,7 +730,7 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
   if (lEventType == HCI_EVNT_WLAN_UNSOL_CONNECT)
   {
     ulCC3000Connected = 1;
-    TM_DEBUG("connected\n");
+    TM_DEBUG("connected\n\r");
   }
   
   if (lEventType == HCI_EVNT_WLAN_UNSOL_DISCONNECT)
@@ -740,7 +740,7 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
     ulCC3000DHCP_configured = 0;
     printOnce = 1;
     
-    TM_DEBUG("disconnected\n");
+    TM_DEBUG("disconnected\n\r");
 
     digitalWrite(ConnLED, LOW);
     // digitalWrite(ErrorLED, HIGH);
@@ -749,7 +749,7 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
   if (lEventType == HCI_EVNT_WLAN_UNSOL_DHCP)
   {
 
-    TM_DEBUG("dhcp\n");
+    TM_DEBUG("dhcp\n\r");
     // Notes: 
     // 1) IP config parameters are received swapped
     // 2) IP config parameters are valid only if status is OK, i.e. ulCC3000DHCP becomes 1
@@ -761,14 +761,14 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
 
       ulCC3000DHCP = 1;
 
-      TM_DEBUG("DHCP Connected with IP: %hhu.%hhu.%hhu.%hhu\n", (unsigned char) data[3], (unsigned char) data[2], (unsigned char) data[1], (unsigned char) data[0]);
+      TM_DEBUG("DHCP Connected with IP: %hhu.%hhu.%hhu.%hhu\n\r", (unsigned char) data[3], (unsigned char) data[2], (unsigned char) data[1], (unsigned char) data[0]);
 
       digitalWrite(ConnLED, HIGH);
     }
     else
     {
       ulCC3000DHCP = 0;
-      TM_DEBUG("DHCP failed\n");
+      TM_DEBUG("DHCP failed\n\r");
       digitalWrite(ConnLED, LOW);
     }
   }

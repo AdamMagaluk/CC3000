@@ -3,3 +3,4 @@ backup-util
 
 # Mac crap
 .DS_Store
+.build
